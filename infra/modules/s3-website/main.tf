@@ -2,7 +2,7 @@ data "terraform_remote_state" "bucket" {
   backend = "s3"
   config = {
     bucket = var.bucket_name_backup
-    key    = "/terraform/state"
+    key    = "terraform/state"
     region = var.region
   }
 }
