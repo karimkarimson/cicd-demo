@@ -28,3 +28,21 @@ resource "aws_s3_bucket_public_access_block" "this" {
   ignore_public_acls      = false
   restrict_public_buckets = false
 }
+
+resource "aws_s3_bucket_policy" "allow_http_access" {
+  bucket = aws_s3_bucket.this.id
+  policy = data.aws_iam_policy_document.allow_website_access.json
+}
+
+data "aws_iam_policy_document" "allow_website_access" {
+  statement {
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = [
+      aws_s3_bucket.this.arn,
+      "${aws_s3_bucket.this.arn}/*",
+    ]
+  }
+}
