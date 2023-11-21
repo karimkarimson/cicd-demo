@@ -46,8 +46,8 @@ resource "aws_s3_bucket_policy" "allow_http_access" {
 data "aws_iam_policy_document" "allow_website_access" {
   statement {
     principals {
-      type        = "AWS"
-      identifiers = ["475032304489"]
+      type        = "*"
+      identifiers = ["*"]
     }
 
     actions = [
