@@ -4,6 +4,9 @@
 */.terraform
 *.terraform.*
 
+# tfplan file
+*tfplan.out
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
