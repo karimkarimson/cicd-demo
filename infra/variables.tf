@@ -10,3 +10,7 @@ variable "aws_profile" {
 variable "bucket_name" {
   type = string
 }
+
+variable "bucket_name_backup" {
+  type = string
+}
