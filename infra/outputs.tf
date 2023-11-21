@@ -2,10 +2,6 @@ output "bucket_arn" {
   value = module.s3-website.bucket_arn
 }
 
-output "bucket_domain_name" {
-  value = module.s3-website.bucket_domain_name
-}
-
 output "bucket_id" {
   value = module.s3-website.bucket_id
 }
