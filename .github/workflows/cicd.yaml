@@ -28,7 +28,11 @@ jobs:
 
       - run: mkdir -p ~/.aws/
       - run: echo "[techstarter]" > ~/.aws/credentials
+
       - run: echo "region = eu-central-1" >> ~/.aws/credentials
+      # - run: echo "sso_start_url=$AWS_SSO_START_URL" >> ~/.aws/credentials
+        # env: 
+          # AWS_SSO_START_URL: ${{ secrets.AWS_SSO_START_URL }}
       - run: echo "aws_access_key_id=$AWS_ACCESS_KEY" >> ~/.aws/credentials
         env: 
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
@@ -43,17 +47,29 @@ jobs:
       - run: aws configure list-profiles
       - run: aws s3 ls --region eu-central-1 --profile techstarter
       - uses: hashicorp/setup-terraform@v2
-      - run: terraform version
-      - run: terraform -chdir=./infra init
-      - run: terraform -chdir=./infra validate
-      - run: terraform -chdir=./infra plan --out tfplan.out
+      - run: npm run tf-version
+      - run: npm run tf-init
         env:
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
           AWS_PROFILE: ${{ vars.AWS_PROFILE }}
-      - run: terraform -chdir=./infra apply tfplan.out
+      - run: npm run tf-val
+        env:
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
+          AWS_PROFILE: ${{ vars.AWS_PROFILE }}
+      - run: npm run tf-plan
+        env:
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
+          AWS_PROFILE: ${{ vars.AWS_PROFILE }}
+      - run: npm run tf-apply
         env:
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
