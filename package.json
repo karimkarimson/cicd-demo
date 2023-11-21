@@ -17,8 +17,8 @@
     "tf-version": "terraform version",
     "tf-init": "terraform -chdir=./infra init",
     "tf-val": "terraform -chdir=./infra validate",
-    "tf-plan": "terraform -chdir=./infra plan --out=tfplan",
-    "tf-apply": "terraform -chdir=./infra apply -auto-approve",
+    "tf-plan": "terraform -chdir=./infra plan",
+    "tf-apply": "terraform -chdir=./infra apply --auto-approve",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
