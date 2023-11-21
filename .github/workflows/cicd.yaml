@@ -34,7 +34,7 @@ jobs:
       - run: echo "aws_secret_access_key=$AWS_SECRET_KEY" >> ~/.aws/credentials
         env: 
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      - run: echo "$aws_session_token=$AWS_SESSION_TOKEN" >> ~/.aws/credentials
+      - run: echo "aws_session_token=$AWS_SESSION_TOKEN" >> ~/.aws/credentials
         env:
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}}
 
