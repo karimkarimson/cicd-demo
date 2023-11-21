@@ -28,6 +28,7 @@ jobs:
 
       - run: mkdir -p ~/.aws/
       - run: echo "[techstarter]" > ~/.aws/credentials
+      - run: echo "region = eu-central-1" >> ~/.aws/credentials
       - run: echo "aws_access_key_id=$AWS_ACCESS_KEY" >> ~/.aws/credentials
         env: 
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
