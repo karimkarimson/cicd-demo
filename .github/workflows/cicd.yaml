@@ -46,6 +46,6 @@ jobs:
       - run: terraform -chdir=./infra init
       - run: terraform -chdir=./infra validate
       - run: terraform -chdir=./infra plan --out tfplan.out
-      - run: aws s3 cp ./infra/tfplan.out s3://cicd-bucket-k1m0-738135 --profile techstarter
+      - run: aws s3 cp infra/tfplan.out s3://cicd-bucket-k1m0-738135 --profile techstarter
       - run: terraform -chdir=./infra apply tfplan.out
       - run: aws s3 sync ./build s3://cicd-bucket-k1m0-738135 --profile techstarter
