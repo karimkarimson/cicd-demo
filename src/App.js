@@ -16,6 +16,16 @@ function App() {
     //     console.log(data);
     //     setIpInfo(data);
     //   });
+    setIpInfo({
+      ip: "some value",
+      city: "some value",
+      region: "some value",
+      country: "some value",
+      loc: "some value",
+      postal: "some value",
+      timezone: "some value",
+      org: "some value",
+    });
   }
   return (
     <main>
