@@ -1,19 +1,14 @@
-data "terraform_remote_state" "bucket" {
-  backend = "s3"
-  config = {
-    bucket = var.bucket_name_backup
-    key    = "terraform/terraform.tfstate"
-    region = var.region
-  }
-}
-
-
-data "aws_s3_bucket" "thisbucket" {
-  bucket = var.bucket_name
-}
+# data "terraform_remote_state" "bucket" {
+#   backend = "s3"
+#   config = {
+#     bucket = var.bucket_name_backup
+#     key    = "terraform/terraform.tfstate"
+#     region = var.region
+#   }
+# }
 
 resource "aws_s3_bucket" "this" {
-  bucket = data.aws_s3_bucket.thisbucket.id
+  bucket = var.bucket_name
 
   tags = {
     Name        = var.bucket_name # My lovely website"

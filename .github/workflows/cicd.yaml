@@ -47,5 +47,17 @@ jobs:
       - run: terraform -chdir=./infra init
       - run: terraform -chdir=./infra validate
       - run: terraform -chdir=./infra plan --out tfplan.out
+        env:
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ENDPOINT_URL_SSO: ${{ variables.AWS_ENDPOINT_URL_SSO }}
+          AWS_PROFILE: ${{ variables.AWS_PROFILE }}
       - run: terraform -chdir=./infra apply tfplan.out
+        env:
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_ENDPOINT_URL_SSO: ${{ variables.AWS_ENDPOINT_URL_SSO }}
+          AWS_PROFILE: ${{ variables.AWS_PROFILE }}
       - run: aws s3 sync ./build s3://cicd-bucket-k1m0-738135 --profile techstarter

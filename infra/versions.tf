@@ -9,10 +9,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket  = "tfstate-bucket-k1m0"
-    key     = "terraform/terraform.tfstate"
-    region  = "eu-central-1"
-    profile = "techstarter"
+    bucket = "tfstate-bucket-k1m0"
+    key    = "terraform/terraform.tfstate"
+    region = "eu-central-1"
   }
 }
 
