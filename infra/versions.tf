@@ -12,6 +12,7 @@ terraform {
     bucket = "tfstate-bucket-k1m0"
     key    = "terraform/terraform.tfstate"
     region = "eu-central-1"
+    dynamodb_table = "tfstate-table-k1m0"
   }
 }
 
