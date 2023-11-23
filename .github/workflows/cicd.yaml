@@ -1,5 +1,5 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: React Website CI/CD with TF, AWS and GitHub Actions
+run-name: ${{ github.actor }} 🚀 triggered pipeline on ${{ github.event_name }} 🤖
 on: [push]
 jobs:
   Explore-GitHub-Actions:
