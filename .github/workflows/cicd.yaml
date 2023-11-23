@@ -7,9 +7,6 @@ jobs:
       AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
-      AWS_PROFILE: ${{ vars.AWS_PROFILE }}
-      BUCKET_NAME: "cicd-bucket-k1m0-738135"
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -30,6 +27,8 @@ jobs:
       - run: echo "aws_secret_access_key=$AWS_SECRET_KEY" >> ~/.aws/credentials
       - run: echo "aws_session_token=$AWS_SESSION_TOKEN" >> ~/.aws/credentials
       - uses: hashicorp/setup-terraform@v2
+    outputs:
+      RUNNER: ${{ runner.name }}
 
   Test:
     env:
@@ -39,7 +38,7 @@ jobs:
       AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
       AWS_PROFILE: ${{ vars.AWS_PROFILE }}
       BUCKET_NAME: "cicd-bucket-k1m0-738135"
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.Build.outputs.RUNNER}}
     needs: Build
     steps:
       - run: echo "TESTING"
@@ -59,7 +58,7 @@ jobs:
       AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
       AWS_PROFILE: ${{ vars.AWS_PROFILE }}
       BUCKET_NAME: "cicd-bucket-k1m0-738135"
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.Build.outputs.RUNNER }}
     needs: Test
     steps:
       - run: echo "CREATING BUCKET {{ vars.BUCKET_NAME }}"
