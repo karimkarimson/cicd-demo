@@ -9,10 +9,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "tfstate-bucket-k1m0"
-    key    = "terraform/terraform.tfstate"
-    region = "eu-central-1"
-    dynamodb_table = "tfstate-table-k1m0"
+    bucket         = "tf-backend-bucket-k1m0"
+    key            = "terraform/terraform.tfstate"
+    region         = "eu-central-1"
+    dynamodb_table = "tf-backend-lock-k1m0-testtable"
   }
 }
 

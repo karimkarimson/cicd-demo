@@ -1,12 +1,3 @@
-# data "terraform_remote_state" "bucket" {
-#   backend = "s3"
-#   config = {
-#     bucket = var.bucket_name_backup
-#     key    = "terraform/terraform.tfstate"
-#     region = var.region
-#   }
-# }
-
 resource "aws_s3_bucket" "this" {
   bucket = var.bucket_name
 

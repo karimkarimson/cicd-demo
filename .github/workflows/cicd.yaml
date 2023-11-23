@@ -44,9 +44,11 @@ jobs:
       - run: aws configure list-profiles
       - run: aws s3 ls --region eu-central-1 --profile techstarter
       - uses: hashicorp/setup-terraform@v2
+
       - run: npm run tf-version
       - run: npm run tf-init
       - run: npm run tf-val
       - run: npm run tf-plan
       - run: npm run tf-apply
+
       - run: aws s3 sync ./build s3://cicd-bucket-k1m0-738135 --profile techstarter
