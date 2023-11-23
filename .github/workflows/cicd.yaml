@@ -2,26 +2,18 @@ name: React Website CI/CD
 run-name: Build Deploy and Test by 🚀 ${{ github.actor }} 🤖
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
+  Build:
     env:
       AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
       AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
       AWS_PROFILE: ${{ vars.AWS_PROFILE }}
+      BUCKET_NAME: "cicd-bucket-k1m0-738135"
+    runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - name: Check out repository code
         uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-      - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -31,23 +23,31 @@ jobs:
       - run: npm test
       - id: install-aws-cli
         uses: unfor19/install-aws-cli-action@v1
-
+        
       - run: mkdir -p ~/.aws/
       - run: echo "[techstarter]" > ~/.aws/credentials
-      - run: echo "region = eu-central-1" >> ~/.aws/credentials
       - run: echo "aws_access_key_id=$AWS_ACCESS_KEY" >> ~/.aws/credentials
       - run: echo "aws_secret_access_key=$AWS_SECRET_KEY" >> ~/.aws/credentials
       - run: echo "aws_session_token=$AWS_SESSION_TOKEN" >> ~/.aws/credentials
-      - run: cat ~/.aws/credentials
-
-      - run: aws configure list-profiles
-      - run: aws s3 ls --region eu-central-1 --profile techstarter
       - uses: hashicorp/setup-terraform@v2
 
-      - run: npm run tf-version
-      - run: npm run tf-init
-      - run: npm run tf-val
-      - run: npm run tf-plan
-      - run: npm run tf-apply
+  Test:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - run: echo "TESTING"
+      - run: cat ~/.aws/credentials
+      - run: aws configure list-profiles
+      - run: aws s3 ls --region eu-central-1 --profile techstarter
+      - run: terraform version
+      - run: terraform -chdir=./infra init
+      - run: terraform -chdir=./infra validate
+      - run: terraform -chdir=./infra plan
 
-      - run: aws s3 sync ./build s3://cicd-bucket-k1m0-738135 --profile techstarter
+  Deploy-and-Upload:
+    runs-on: ubuntu-latest
+    needs: Test
+    steps:
+      - run: echo "CREATING BUCKET {{ vars.BUCKET_NAME }}"
+      - run: terraform -chdir=./infra apply --auto-approve -var "bucket_name=${{ vars.BUCKET_NAME }}",
+      - run: aws s3 sync ./build s3://{{ vars.BUCKET_NAME }} --profile techstarter
