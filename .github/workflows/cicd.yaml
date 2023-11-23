@@ -32,6 +32,13 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
 
   Test:
+    env:
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
+      AWS_PROFILE: ${{ vars.AWS_PROFILE }}
+      BUCKET_NAME: "cicd-bucket-k1m0-738135"
     runs-on: ubuntu-latest
     needs: Build
     steps:
@@ -45,6 +52,13 @@ jobs:
       - run: terraform -chdir=./infra plan
 
   Deploy-and-Upload:
+    env:
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
+      AWS_PROFILE: ${{ vars.AWS_PROFILE }}
+      BUCKET_NAME: "cicd-bucket-k1m0-738135"
     runs-on: ubuntu-latest
     needs: Test
     steps:
