@@ -26,11 +26,8 @@ jobs:
       - run: echo "aws_secret_access_key=$AWS_SECRET_KEY" >> ~/.aws/credentials
       - run: echo "aws_session_token=$AWS_SESSION_TOKEN" >> ~/.aws/credentials
       - uses: hashicorp/setup-terraform@v2
-      - name: Upload aws credentials
+      - name: Upload workflow
         uses: actions/upload-artifact@v3
-        with:
-          name: aws
-          path: ~/.aws
 
   Test:
     env:
@@ -43,16 +40,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: Build
     steps:
-      - name: Download AWS credentials result
-        uses: actions/download-artifact@v3
-        with:
-          name: aws
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20.x'
-      - uses: unfor19/install-aws-cli-action@v1
-      - uses: hashicorp/setup-terraform@v2
+      - name: Download workflow
+        uses: actions/download-artifact@v3
       - run: npm ci
       - run: npm run build
 
