@@ -15,6 +15,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
+          cache: 'npm'
+          # cache-dependency-path: /home/runner/work/cicd-demo/cicd-demo/package-lock.json
       - run: npm ci
       - run: npm run build
       - id: install-aws-cli
@@ -55,6 +57,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20.x'
+          cache: 'npm'
       - uses: unfor19/install-aws-cli-action@v1
       - uses: hashicorp/setup-terraform@v2
       - run: npm ci
