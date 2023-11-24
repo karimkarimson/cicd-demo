@@ -27,8 +27,11 @@ jobs:
       - run: echo "aws_secret_access_key=$AWS_SECRET_KEY" >> ~/.aws/credentials
       - run: echo "aws_session_token=$AWS_SESSION_TOKEN" >> ~/.aws/credentials
       - uses: hashicorp/setup-terraform@v2
-    outputs:
-      RUNNER: ${{ runner.name }}
+      - name: Upload build result for Build-Job 
+        uses: actions/upload-artifact@v3
+        with:
+          name: build 
+          path: ./*
 
   Test:
     env:
@@ -41,6 +44,10 @@ jobs:
     runs-on: ${{ needs.Build.outputs.RUNNER}}
     needs: Build
     steps:
+      - name: Download Build-Job result
+        uses: actions/download-artifact@v3
+        with:
+          name: build
       - run: echo "TESTING"
       - run: cat ~/.aws/credentials
       - run: aws configure list-profiles
@@ -49,6 +56,11 @@ jobs:
       - run: terraform -chdir=./infra init
       - run: terraform -chdir=./infra validate
       - run: terraform -chdir=./infra plan
+      - name: Upload test result for Deploy-Job 
+        uses: actions/upload-artifact@v3
+        with:
+          name: test
+          path: ./*
 
   Deploy-and-Upload:
     env:
@@ -61,6 +73,10 @@ jobs:
     runs-on: ${{ needs.Build.outputs.RUNNER }}
     needs: Test
     steps:
+      - name: Download Test-Job result
+        uses: actions/download-artifact@v3
+        with:
+          name: test
       - run: echo "CREATING BUCKET {{ vars.BUCKET_NAME }}"
       - run: terraform -chdir=./infra apply --auto-approve -var "bucket_name=${{ vars.BUCKET_NAME }}",
       - run: aws s3 sync ./build s3://{{ vars.BUCKET_NAME }} --profile techstarter
