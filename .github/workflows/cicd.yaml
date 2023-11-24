@@ -83,4 +83,4 @@ jobs:
       - run: npm run build
       - run: terraform -chdir=./infra init
       - run: terraform -chdir=./infra apply --auto-approve -var "bucket_name=${{ env.BUCKET_NAME }}"
-      - run: aws s3 sync ./build s3://{{ env.BUCKET_NAME }} --profile techstarter
+      - run: aws s3 sync ./build "s3://${{ env.BUCKET_NAME }}" --profile techstarter
