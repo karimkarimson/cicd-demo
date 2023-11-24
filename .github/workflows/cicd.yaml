@@ -19,7 +19,6 @@ jobs:
         with:
           node-version: '20.x'
           cache: 'npm'
-          # cache-dependency-path: /home/runner/work/cicd-demo/cicd-demo/package-lock.json
       - run: npm ci
       - run: npm run build
       - id: install-aws-cli
@@ -56,8 +55,6 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - run: echo "TESTING"
-      - run: ls -R ~/work
       - run: cat ~/.aws/credentials
       - run: npm test
       - run: aws configure list-profiles
@@ -66,12 +63,6 @@ jobs:
       - run: terraform -chdir=./infra init
       - run: terraform -chdir=./infra validate
       - run: terraform -chdir=./infra plan
-      - name: Upload Terraform results for Deploy-Job 
-        uses: actions/upload-artifact@v3
-        with:
-          name: infra
-          path: ~/work/cicd-demo/cicd-demo/infra
-
 
   Deploy-and-Upload:
     runs-on: ubuntu-latest
@@ -81,11 +72,6 @@ jobs:
         name: .aws
         with:
           path: /home/runner/
-      - name: Download terraform results
-        uses: actions/download-artifact@v3
-        with:
-          name: infra
-          path: ~/work/cicd-demo/cicd-demo/infra
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
@@ -95,6 +81,6 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
       - run: npm ci
       - run: npm run build
-      - run: echo "CREATING BUCKET {{ env.BUCKET_NAME }}"
+      - run: terraform -chdir=./infra init
       - run: terraform -chdir=./infra apply --auto-approve -var "bucket_name=${{ env.BUCKET_NAME }}",
       - run: aws s3 sync ./build s3://{{ env.BUCKET_NAME }} --profile techstarter
