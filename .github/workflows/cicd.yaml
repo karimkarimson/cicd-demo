@@ -61,6 +61,7 @@ jobs:
       - run: npm run build
 
       - run: echo "TESTING"
+      - run: ls -R ~/work
       - run: cat ~/.aws/credentials
       - run: npm test
       - run: aws configure list-profiles
