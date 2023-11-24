@@ -1,12 +1,15 @@
 name: React Website CI/CD
 run-name: Build Deploy and Test by 🚀 ${{ github.actor }} 🤖
 on: [push]
+env:
+  AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
+  AWS_PROFILE: ${{ vars.AWS_PROFILE }}
+  BUCKET_NAME: "cicd-bucket-k1m0-738135"
 jobs:
   Build:
-    env:
-      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -36,13 +39,6 @@ jobs:
             ~/.aws
 
   Test:
-    env:
-      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
-      AWS_PROFILE: ${{ vars.AWS_PROFILE }}
-      BUCKET_NAME: "cicd-bucket-k1m0-738135"
     runs-on: ubuntu-latest
     needs: Build
     steps:
@@ -78,20 +74,13 @@ jobs:
 
 
   Deploy-and-Upload:
-    env:
-      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      AWS_ENDPOINT_URL_SSO: ${{ vars.AWS_ENDPOINT_URL_SSO }}
-      AWS_PROFILE: ${{ vars.AWS_PROFILE }}
-      BUCKET_NAME: "cicd-bucket-k1m0-738135"
     runs-on: ubuntu-latest
     needs: Test
     steps:
-      - name: Download AWS credentials result
-        uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v3
+        name: .aws
         with:
-          name: aws
+          path: /home/runner/
       - name: Download terraform results
         uses: actions/download-artifact@v3
         with:
@@ -106,6 +95,6 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
       - run: npm ci
       - run: npm run build
-      - run: echo "CREATING BUCKET {{ vars.BUCKET_NAME }}"
-      - run: terraform -chdir=./infra apply --auto-approve -var "bucket_name=${{ vars.BUCKET_NAME }}",
-      - run: aws s3 sync ./build s3://{{ vars.BUCKET_NAME }} --profile techstarter
+      - run: echo "CREATING BUCKET {{ env.BUCKET_NAME }}"
+      - run: terraform -chdir=./infra apply --auto-approve -var "bucket_name=${{ env.BUCKET_NAME }}",
+      - run: aws s3 sync ./build s3://{{ env.BUCKET_NAME }} --profile techstarter
