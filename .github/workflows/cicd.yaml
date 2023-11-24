@@ -28,6 +28,10 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
       - name: Upload workflow
         uses: actions/upload-artifact@v3
+        with: 
+          name: data
+          path: |
+            ~/.aws/*
 
   Test:
     env:
@@ -41,8 +45,13 @@ jobs:
     needs: Build
     steps:
       - uses: actions/checkout@v4
-      - name: Download workflow
-        uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v3
+      - run: echo $(pwd)
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+      - uses: unfor19/install-aws-cli-action@v1
+      - uses: hashicorp/setup-terraform@v2
       - run: npm ci
       - run: npm run build
 
@@ -58,8 +67,11 @@ jobs:
       - name: Upload Terraform results for Deploy-Job 
         uses: actions/upload-artifact@v3
         with:
-          name: terra
-          path: ./*infra/*
+          name: data
+          path: |
+            ~/.aws/*
+            ./*infra/*
+
 
   Deploy-and-Upload:
     env:
